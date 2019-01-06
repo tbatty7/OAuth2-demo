@@ -51,7 +51,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
         String pwd = environment.getProperty("keystore.password");
         KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(
                 new ClassPathResource("jwt.jks"),
-                pwd.toCharArray());
+                pwd != null ? pwd.toCharArray() : new char[0]);
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setKeyPair(keyStoreKeyFactory.getKeyPair("jwt"));
         return converter;
@@ -64,6 +64,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
                 .withClient("service-account-1")
                 .secret(encoder.encode("service-account-1-secret"))
                 .authorizedGrantTypes("client_credentials")
-                .scopes("resource-server-read", "resource-server-write");
+                .scopes("resource-server-read", "resource-server-write")
+                .authorities("ROLE_RS_READ");
     }
 }
